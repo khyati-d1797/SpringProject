@@ -1,7 +1,12 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +26,13 @@ import com.example.demo.repository.StudentSubjectTeacherRepository;
 import com.example.demo.repository.SubjectRepository;
 import com.example.demo.repository.TeacherRepository;
 import com.example.demo.repository.TeacherSubjectRepository;
+import com.example.demo.utilities.DateUtil;
+import com.example.demo.utilities.Logger;
 
 @Service
 public class StudentService {
+	
+	
 
 	@Autowired
 	private StudentRepository stdRepo;
@@ -160,5 +169,39 @@ public class StudentService {
 		response.setSubteachList(subTeachResList);
 
 		return response;
+	}
+
+	public StudentResponse getStudentDescription(Integer id) {
+		StudentResponse stdres = new StudentResponse();
+		Optional<Student> optionalStd = stdRepo.findById(id);
+		if(optionalStd.isEmpty()) {
+			return stdres;
+		}
+		Student std = optionalStd.get();
+		System.out.println(std.toString());
+		stdres.setStdName(std.getName());
+		System.out.println(stdres.toString());
+		
+		
+		LocalDate curDate = LocalDate.now();
+		System.out.println(curDate);
+		System.out.println(std.getDob());
+		
+		
+		
+		LocalDate localDob = std.getDob().toInstant()
+			      .atZone(ZoneId.systemDefault())
+			      .toLocalDate();
+		
+		Integer age = Period.between(localDob, curDate).getYears();
+		stdres.setAge(age);
+		Logger.log(curDate, std.getDob(), age);
+		String gender = std.getGender() == 'F' ? "girl" : "boy";
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH);
+		Logger.log(localDob.format(formatter)); //print month ex. Oct or Aug
+		String ordinal = DateUtil.getOrdinal(localDob.getDayOfMonth());
+		stdres.setStudentDescription(std.getName() + ", born in "+ localDob.format(formatter)+ " " + ordinal + ", " + localDob.getYear() + " is a good " + gender);
+		return stdres;
 	}
 }

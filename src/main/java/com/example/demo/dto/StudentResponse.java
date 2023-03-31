@@ -18,6 +18,8 @@ public class StudentResponse {
 
 	private Integer stdId = 0;
 	private String StdName = "";
+	private Integer age = 0;
+	private String studentDescription = "";
 	
 	List<SubjectResponse> subjects = new ArrayList<SubjectResponse>();
 	List<TeacherResponse> teachers = new ArrayList<TeacherResponse>();

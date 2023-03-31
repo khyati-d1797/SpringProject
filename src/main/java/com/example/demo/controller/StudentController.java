@@ -64,5 +64,13 @@ public class StudentController {
 		return stdService.getStudentAndSubjects(id);
 		
 	}
+	
+	@GetMapping("/student/str/{id}")
+	public StudentResponse getStudentDescription(@PathVariable("id") Integer id) {
+		
+		
+		return stdService.getStudentDescription(id);
+		
+	}
 
 }
